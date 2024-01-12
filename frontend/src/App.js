@@ -2,8 +2,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './screens/sidebar';
-import Reviewform from './screens/reviewform';
+import EmployeeForm from './screens/employeeForm';
 import Dashboard from './screens/dashboard'
+import Formtable from './screens/formTable'
+import FeedbackForm from './screens/feedbackForm'
 
 function App() {
   return (
@@ -13,7 +15,9 @@ function App() {
 
         <Route path="/" element={<Sidebar/>} />
         <Route path="/dashboard" element={<Dashboard/>} />
-        <Route path="/forms" element={<Reviewform />} />
+        <Route path="/forms" element={<EmployeeForm />} />
+        <Route path="/feedbakform" element={<FeedbackForm />} />
+        <Route path="/table" element={<Formtable />} />
       </Routes>
     </Router>
   );

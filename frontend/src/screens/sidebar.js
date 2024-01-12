@@ -20,8 +20,9 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import AddHomeIcon from "@mui/icons-material/AddHome";
 import TableChartIcon from '@mui/icons-material/TableChart';
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
+import Tooltip from '@mui/material/Tooltip';
 
 const drawerWidth = 240;
 
@@ -92,7 +93,6 @@ const Drawer = styled(MuiDrawer, {
 export default function Sidebar() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -103,10 +103,10 @@ export default function Sidebar() {
   };
 
 
-const pages = [ { page: "Home", to: "/home", icon: <AddHomeIcon /> },
-{ page: "Form", to: "/forms", icon: <FormatAlignJustifyIcon /> },
-{ page: "Dashboard", to: "/dashboard", icon: <DashboardIcon /> },
-{ page: "Table", to: "/table", icon: <TableChartIcon /> }]
+const pages = [ { page: "Home", to: "/home", icon: <AddHomeIcon />,Tooltip:"Home" },
+{ page: "Form", to: "/feedbakform", icon: <FormatAlignJustifyIcon />,Tooltip:"Form" },
+{ page: "Dashboard", to: "/dashboard", icon: <DashboardIcon />,Tooltip:"Dashboard" },
+{ page: "Table", to: "/table", icon: <TableChartIcon />,Tooltip:"Table" }]
 
 
 
@@ -147,34 +147,33 @@ return (
       </DrawerHeader>
       <Divider />
       <List>
-        {pages.map((text, index) => (
-          <ListItem key={index} disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              LinkComponent={Link}
-              to={text.to}
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
-            >
+      {pages.map((text, index) => (
+        <ListItem key={index} disablePadding sx={{ display: 'block' }}>
+          <ListItemButton
+            LinkComponent={Link}
+            to={text.to}
+            sx={{
+              minHeight: 48,
+              justifyContent: open ? 'initial' : 'center',
+              px: 2.5,
+            }}
+          >
+            <Tooltip title={text.Tooltip} arrow placement="right-start">
               <ListItemIcon
                 sx={{
                   minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
                 }}
               >
                 {text.icon}
               </ListItemIcon>
-              <ListItemText
-                primary={text.page}
-                sx={{ opacity: open ? 1 : 0 }}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+            </Tooltip>
+            <ListItemText primary={text.page} sx={{ opacity: open ? 1 : 0 }} />
+          </ListItemButton>
+        </ListItem>
+      ))}
+    </List>
       <Divider />
     </Drawer>
   </Box>
