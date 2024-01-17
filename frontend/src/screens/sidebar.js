@@ -90,7 +90,7 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-export default function Sidebar() {
+export default function Sidebar(name) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -101,10 +101,10 @@ export default function Sidebar() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
+console.log(name,"addadaaaa!")
 
 const pages = [ { page: "Home", to: "/home", icon: <AddHomeIcon />,Tooltip:"Home" },
-{ page: "Form", to: "/feedbakform", icon: <FormatAlignJustifyIcon />,Tooltip:"Form" },
+{ page: "Form", to: "/feedbackform", icon: <FormatAlignJustifyIcon />,Tooltip:"Form" },
 { page: "Dashboard", to: "/dashboard", icon: <DashboardIcon />,Tooltip:"Dashboard" },
 { page: "Table", to: "/table", icon: <TableChartIcon />,Tooltip:"Table" }]
 

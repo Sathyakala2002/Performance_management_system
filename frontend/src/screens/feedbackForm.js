@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   TextField,
   Button,
@@ -7,60 +7,28 @@ import {
   InputLabel,
   Box,
   Slider,
-  Radio,
-  RadioGroup,
-  FormLabel,
-  FormControlLabel,
   Rating,
   Select,
 } from "@mui/material";
-import TextareaAutosize from "@mui/material/TextareaAutosize";
-import { styled } from "@mui/system";
+import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
+import { TextareaAutosize, Typography } from "@mui/material";
+
 import Sidebar from "./sidebar";
 import axios from "axios";
-import { useSnackbar } from "notistack";
-import {useNavigate} from "react-router-dom"
 
 const FeedbackForm = () => {
   const marks = [
-    {
-      value: 20,
-      label: "Need improvement",
-    },
-    {
-      value: 50,
-      label: "Good",
-    },
-    {
-      value: 90,
-      label: "Excellent",
-    },
+    { value: 20, label: "Need improvement" },
+    { value: 50, label: "Good" },
+    { value: 90, label: "Excellent" },
   ];
-
   function valuetext(value: number) {
     return `${value}`;
   }
-  const blue = {
-    100: "#DAECFF",
-    200: "#b6daff",
-    400: "#3399FF",
-  };
 
-  const Textarea = styled(TextareaAutosize)(
-    ({ theme }) => `
-      width: 500px;
-      font-family: 'IBM Plex Sans', sans-serif;
-      border: 1px solid black;
-      border-radius: 12px 12px 0 12px;
-      padding: 12px;
-      &:hover {
-        border-color: ${
-          theme.palette.mode === "dark" ? blue[400] : "hoverColor"
-        };
-      }
-    `
-  );
-  const initialEmployeeFeedbackState = {
+  const initialFeedbackState = {
+    employeeId:"",
     taskCompletion: "",
     taskCompletionComment: "",
     meetingDeadlines: "",
@@ -72,7 +40,7 @@ const FeedbackForm = () => {
     adaptingToNewTasks: "",
     adaptingToNewTasksComment: "",
     conflictHandling: "",
-    conflictHandlingcomment: "",
+    conflictHandlingComment: "",
     mentorshipSupport: "",
     mentorshipSupportComment: "",
     ethicalBehavior: "",
@@ -80,41 +48,118 @@ const FeedbackForm = () => {
     customerInteractions: "",
     customerInteractionsComment: "",
     feedbackHandling: "",
-    communicationSkills: "",
+    feedbackHandlingComment: "",
+    timingKeepup: "",
+    timingKeepupComment: "",
+    attendancePercentage: null,
+    communicationSkills: 0,
+    taskCompletionRating: 0,
+    meetingDeadlinesRating: 0,
+    initiativeRating: 0,
+    collaborationRating: 0,
+    adaptingToNewTasksRating: 0,
+    conflictHandlingRating: 0,
+    mentorshipSupportRating: 0,
+    ethicalBehaviorRating: 0,
+    customerInteractionsRating: 0,
+    feedbackHandlingRating: 0,
+    timingKeepupRating: 0,
   };
 
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
-  const [feedbackData, setFeedbackData] = useState(
-    initialEmployeeFeedbackState
-  );
+
+  const [feedbackData, setFeedbackData] = useState(initialFeedbackState);
+  const [attendancePercentage, setAttendancePercentage] = useState(null);
+  const [totalWorkingDays, setTotalWorkingDays] = useState("");
+  const [employeeList, setEmployeeList] = useState([]); // New state for employee list
+  const [daysPresent, setDaysPresent] = useState("");
   const [errors, setErrors] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    role: "",
-    age: "",
-    taskCompletion: "", // Adjusted for Step 2
+    taskCompletion: "",
+    meetingDeadlines: "",
+    initiative: "",
+    collaboration: "",
+    adaptingToNewTasks: "",
+    conflictHandling: "",
+    mentorshipSupport: "",
+    ethicalBehavior: "",
+    customerInteractions: "",
+    feedbackHandling: "",
+    timingKeepup: "",
+    attendancePercentage: null,
   });
 
-//   const handleOnChange = (e) => {
-//     const { name, value } = e.target;
-//     setFeedbackData((prev) => ({
-//       ...prev,
-//       [name]: value,
-//     }));
-//     setErrors((prev) => ({ ...prev, [name]: "" }));
-//   };
+  const handleOnChange = (e) => {
+    const { value, name } = e.target;
+    setFeedbackData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
+    }));
+  };
+  const handleCalculateAttendance = () => {
+    const totalDays = parseInt(totalWorkingDays, 10);
+    const presentDays = parseInt(daysPresent, 10);
 
-const handleOnChange=(e) => {
-    setFeedbackData({
-        ...feedbackData,
-        [e.target.name]: e.target.value,
+    if (
+      !isNaN(totalDays) &&
+      !isNaN(presentDays) &&
+      totalDays > 0 &&
+      presentDays >= 0
+    ) {
+      const percentage = (presentDays / totalDays) * 100;
+      setAttendancePercentage(percentage.toFixed(2));
+      setFeedbackData((prevData) => ({
+        ...prevData,
+        attendancePercentage: percentage.toFixed(2),
+      }));
+    } else {
+      setAttendancePercentage(null);
+      setFeedbackData((prevData) => ({
+        ...prevData,
+        attendancePercentage: null,
+      }));
+    }
+  };
+  const handleTextareaChange = (name, value) => {
+    setFeedbackData((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
+  };
 
-    })};
+  const handleRatingChange = (name, value) => {
+    setFeedbackData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+  console.log(feedbackData);
+  useEffect(() => {
 
+const fetchEmployeeData = async () => {
+  try {
+    const response = await fetch("http://localhost:5000/getemplyee");
+    if (!response.ok) {
+      console.log("Network response was not ok");
+      return;
+    }
+    const data = await response.json();
+    console.log(data);
+    enqueueSnackbar(data.message, { variant: "success" });
+    setEmployeeList(data.db); // Update employee list state
+
+  } catch (error) {
+    enqueueSnackbar(error.message, { variant: "error" });
+  }
+};
+
+fetchEmployeeData();
+}, []); 
+console.log(employeeList,"ayyo samy!");
   const handleOnSubmit = async (e) => {
     e.preventDefault();
     await axios
@@ -122,27 +167,54 @@ const handleOnChange=(e) => {
       .then((response) => {
         enqueueSnackbar(response.data.message, { variant: "success" });
         console.log("Form submitted:", feedbackData);
-        setFeedbackData(initialEmployeeFeedbackState);
-        navigate('/table')
+        setFeedbackData(initialFeedbackState);
+        navigate("/table");
       })
       .catch((error) => {
-        console.error("Step 2 API error:", error);
+        console.error("API error:", error);
       });
   };
 
   return (
     <div>
-      <Sidebar />
+      <Sidebar/>
+    
       <div
         className="shadow-md p-8 md:w-96 w-fit mx-auto mt-12 flex items-center justify-center"
         style={{ width: "50%", height: "80%" }}
       >
+        
         <form method="post" onSubmit={(e) => handleOnSubmit(e)}>
-          <h1 className="text-center font-semibold text-blue-800 text-2xl">
+        <div  className="mx-auto mt-12 ">
+<FormControl fullWidth margin="dense">
+        <InputLabel required>Select employee Id:</InputLabel>
+        <Select
+  value={feedbackData.employeeId}
+  name="employeeId"
+  onChange={(e) => handleOnChange(e)}
+  label="Employee Id"
+  error={errors.employeeId}
+>
+  {/* Map over the employeeList and create MenuItem for each employee */}
+  {employeeList.map((employee) => (
+    <MenuItem key={employee.employee_ID} value={employee.employee_ID}>
+      {employee.employee_ID}
+    </MenuItem>
+  ))}
+</Select>
+        {errors.employeeId && (
+          <span style={{ color: "red", fontSize: "0.75rem" }}>
+            {errors.employeeId}
+          </span>
+        )}
+      </FormControl>
+
+      </div>
+          <h1 className="text-center font-semibold text-blue-800 text-2xl my-6">
             Feedback Form
           </h1>
           <>
-            <h2>Technical performance</h2>
+            {/* Task Completion */}
             <FormControl fullWidth margin="dense">
               <InputLabel required>Task Completion:</InputLabel>
               <Select
@@ -166,14 +238,39 @@ const handleOnChange=(e) => {
                 </span>
               )}
             </FormControl>
-            <Textarea
-  aria-label="empty textarea"
-  placeholder="Comments"
-  className="m-4"
-  onChange={(e) => handleOnChange(e, "taskCompletionComment")}
-  value={feedbackData.taskCompletionComment}
-/>
+            <TextareaAutosize
+              name="taskCompletionComment"
+              value={feedbackData.textarea1}
+              onChange={(e) =>
+                handleTextareaChange("taskCompletionComment", e.target.value)
+              }
+              placeholder="taskCompletionComment "
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                marginTop: "10px",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
+            />
 
+            {/* Task Completion Rating */}
+            <FormControl fullWidth margin="dense">
+              <InputLabel required>Task Completion Rating:</InputLabel>
+              <Rating
+                className="mt-9"
+                name="taskCompletionRating"
+                value={feedbackData.taskCompletionRating}
+                onChange={(e) =>
+                  handleRatingChange("taskCompletionRating", e.target.value)
+                }
+                error={errors.adaptingToNewTasks}
+                size="large"
+              />
+            </FormControl>
+
+            {/* Meeting Deadlines */}
             <FormControl fullWidth margin="dense">
               <InputLabel required>Meeting Deadlines:</InputLabel>
               <Select
@@ -195,14 +292,39 @@ const handleOnChange=(e) => {
                 </span>
               )}
             </FormControl>
-            <Textarea
-              aria-label="empty textarea"
-              placeholder="Comments"
-              className="m-4"
-              onChange={(e) => handleOnChange(e, "meetingDeadlines")}
-              value={feedbackData.meetingDeadlines}
+            {/* Meeting Deadlines Comment */}
+            <TextareaAutosize
+              name="meetingDeadlinesComment"
+              value={feedbackData.meetingDeadlinesComment}
+              onChange={(e) =>
+                handleTextareaChange("meetingDeadlinesComment", e.target.value)
+              }
+              placeholder="meetingDeadlinesComment "
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                marginTop: "10px",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
             />
+            {/* Meeting Deadlines Rating */}
+            <FormControl fullWidth margin="dense">
+              <InputLabel required>Meeting Deadline Rating:</InputLabel>
+              <Rating
+                className="mt-9"
+                name="meetingDeadlinesRating"
+                value={feedbackData.meetingDeadlinesRating}
+                onChange={(e) =>
+                  handleRatingChange("meetingDeadlinesRating", e.target.value)
+                }
+                error={errors.adaptingToNewTasks}
+                size="large"
+              />
+            </FormControl>
 
+            {/* Initiative */}
             <FormControl fullWidth margin="dense">
               <InputLabel required>Initiative to new roles:</InputLabel>
               <Select
@@ -224,14 +346,39 @@ const handleOnChange=(e) => {
                 </span>
               )}
             </FormControl>
-            <Textarea
-              aria-label="empty textarea"
-              placeholder="Comments"
-              className="m-4"
-              onChange={(e) => handleOnChange(e, "initiative")}
-              value={feedbackData.initiative}
+            {/* Initiative Comment */}
+            <TextareaAutosize
+              name="initiativeComment"
+              value={feedbackData.initiativeComment}
+              onChange={(e) =>
+                handleTextareaChange("initiativeComment", e.target.value)
+              }
+              placeholder="initiativeComment "
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                marginTop: "10px",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
             />
+            {/* Initiative Rating */}
+            <FormControl fullWidth margin="dense">
+              <InputLabel required>Initiative Rating:</InputLabel>
+              <Rating
+                className="mt-9"
+                name="initiativeRating"
+                value={feedbackData.initiativeRating}
+                onChange={(e) =>
+                  handleRatingChange("initiativeRating", e.target.value)
+                }
+                error={errors.adaptingToNewTasks}
+                size="large"
+              />
+            </FormControl>
 
+            {/* Collaboration */}
             <FormControl fullWidth margin="dense">
               <InputLabel required>Collaboration with team members:</InputLabel>
               <Select
@@ -257,39 +404,93 @@ const handleOnChange=(e) => {
                 </span>
               )}
             </FormControl>
-            <Textarea
-              aria-label="empty textarea"
-              placeholder="Comments"
-              className="m-4"
-              onChange={(e) => handleOnChange(e, "collaboration")}
-              value={feedbackData.collaboration}
+            {/* Collaboration Comment */}
+            <TextareaAutosize
+              name="collaborationComment"
+              value={feedbackData.collaborationComment}
+              onChange={(e) =>
+                handleTextareaChange("collaborationComment", e.target.value)
+              }
+              placeholder="collaborationComment "
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                marginTop: "10px",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
             />
+            {/* Collaboration Rating */}
             <FormControl fullWidth margin="dense">
-              <InputLabel required className="mb-8 pl-5">
-                Adapting to new tasks:
-              </InputLabel>
+              <InputLabel required>Collaboration Rating:</InputLabel>
               <Rating
                 className="mt-9"
-                name="adaptingToNewTasks"
-                value={feedbackData.adaptingToNewTasks}
-                onChange={(e) => handleOnChange(e)}
+                name="collaborationRating"
+                value={feedbackData.collaborationRating}
+                onChange={(e) =>
+                  handleRatingChange("collaborationRating", e.target.value)
+                }
                 error={errors.adaptingToNewTasks}
                 size="large"
               />
+            </FormControl>
+
+            {/* Adapting to new tasks */}
+            <FormControl fullWidth margin="dense">
+              <InputLabel required>Adapting to new tasks:</InputLabel>
+              <Select
+                value={feedbackData.adaptingToNewTasks}
+                name="adaptingToNewTasks"
+                onChange={(e) => handleOnChange(e)}
+                error={errors.adaptingToNewTasks}
+              >
+                <MenuItem value="highlyAdapts">Highly Adapts</MenuItem>
+                <MenuItem value="moderatelyAdapts">Moderately Adapts</MenuItem>
+                <MenuItem value="strugglesToAdapt">Struggles to Adapt</MenuItem>
+              </Select>
               {errors.adaptingToNewTasks && (
                 <span style={{ color: "red", fontSize: "0.75rem" }}>
                   {errors.adaptingToNewTasks}
                 </span>
               )}
             </FormControl>
-            <Textarea
-              aria-label="empty textarea"
-              placeholder="Comments"
-              className="m-4"
-              onChange={(e) => handleOnChange(e, "adaptingToNewTasks")}
-              value={feedbackData.adaptingToNewTasks}
+            {/* Adapting to new tasks Comment */}
+            <TextareaAutosize
+              name="adaptingToNewTasksComment"
+              value={feedbackData.adaptingToNewTasksComment}
+              onChange={(e) =>
+                handleTextareaChange(
+                  "adaptingToNewTasksComment",
+                  e.target.value
+                )
+              }
+              placeholder="adaptingToNewTasksComment "
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                marginTop: "10px",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
             />
+            {/* Adapting to new tasks Rating */}
+            <FormControl fullWidth margin="dense">
+              <InputLabel required>Adapting to new Skills Rating:</InputLabel>
+              <Rating
+                className="mt-9"
+                name="adaptingToNewTasksRating"
+                value={feedbackData.adaptingToNewTasksRating}
+                onChange={(e) =>
+                  handleRatingChange("adaptingToNewTasksRating", e.target.value)
+                }
+                error={errors.adaptingToNewTasks}
+                size="large"
+              />
+            </FormControl>
 
+            {/* Conflict Handling */}
             <FormControl fullWidth margin="dense">
               <InputLabel required>
                 Handling conflicts within the team:
@@ -317,13 +518,37 @@ const handleOnChange=(e) => {
                 </span>
               )}
             </FormControl>
-            <Textarea
-              aria-label="empty textarea"
-              placeholder="Comments"
-              className="m-4"
-              onChange={(e) => handleOnChange(e, "conflictHandling")}
-              value={feedbackData.conflictHandling}
+            {/* Conflict Handling Comment */}
+            <TextareaAutosize
+              name="conflictHandlingComment"
+              value={feedbackData.conflictHandlingComment}
+              onChange={(e) =>
+                handleTextareaChange("conflictHandlingComment", e.target.value)
+              }
+              placeholder="conflictHandlingComment "
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                marginTop: "10px",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
             />
+            {/* Conflict Handling Rating */}
+            <FormControl fullWidth margin="dense">
+              <InputLabel required>Conflict Handling Rating:</InputLabel>
+              <Rating
+                className="mt-9"
+                name="conflictHandlingRating"
+                value={feedbackData.conflictHandlingRating}
+                onChange={(e) =>
+                  handleRatingChange("conflictHandlingRating", e.target.value)
+                }
+                error={errors.adaptingToNewTasks}
+                size="large"
+              />
+            </FormControl>
 
             <FormControl fullWidth margin="dense">
               <InputLabel required>
@@ -352,13 +577,35 @@ const handleOnChange=(e) => {
                 </span>
               )}
             </FormControl>
-            <Textarea
-              aria-label="empty textarea"
-              placeholder="Comments"
-              className="m-4"
-              onChange={(e) => handleOnChange(e, "mentorshipSupport")}
-              value={feedbackData.mentorshipSupport}
+            <TextareaAutosize
+              name="mentorshipSupportComment"
+              value={feedbackData.mentorshipSupportComment}
+              onChange={(e) =>
+                handleTextareaChange("mentorshipSupportComment", e.target.value)
+              }
+              placeholder="mentorshipSupportComment "
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                marginTop: "10px",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
             />
+            <FormControl fullWidth margin="dense">
+              <InputLabel required>Mentorship Support Rating:</InputLabel>
+              <Rating
+                className="mt-9"
+                name="mentorshipSupportRating"
+                value={feedbackData.mentorshipSupportRating}
+                onChange={(e) =>
+                  handleRatingChange("mentorshipSupportRating", e.target.value)
+                }
+                error={errors.adaptingToNewTasks}
+                size="large"
+              />
+            </FormControl>
 
             <FormControl fullWidth margin="dense">
               <InputLabel required>
@@ -387,14 +634,35 @@ const handleOnChange=(e) => {
                 </span>
               )}
             </FormControl>
-            <Textarea
-              aria-label="empty textarea"
-              placeholder="Comments"
-              className="m-4"
-              onChange={(e) => handleOnChange(e, "ethicalBehavior")}
-              value={feedbackData.ethicalBehavior}
+            <TextareaAutosize
+              name="ethicalBehaviorComment"
+              value={feedbackData.ethicalBehaviorComment}
+              onChange={(e) =>
+                handleTextareaChange("ethicalBehaviorComment", e.target.value)
+              }
+              placeholder="ethicalBehaviorComment "
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                marginTop: "10px",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
             />
-
+            <FormControl fullWidth margin="dense">
+              <InputLabel required>Ethical Behavior Rating:</InputLabel>
+              <Rating
+                className="mt-9"
+                name="ethicalBehaviorRating"
+                value={feedbackData.ethicalBehaviorRating}
+                onChange={(e) =>
+                  handleRatingChange("ethicalBehaviorRating", e.target.value)
+                }
+                error={errors.adaptingToNewTasks}
+                size="large"
+              />
+            </FormControl>
             <FormControl fullWidth margin="dense">
               <InputLabel required>
                 Handling customer or client interactions:
@@ -422,14 +690,41 @@ const handleOnChange=(e) => {
                 </span>
               )}
             </FormControl>
-            <Textarea
-              aria-label="empty textarea"
-              placeholder="Comments"
-              className="m-4"
-              onChange={(e) => handleOnChange(e, "customerInteractions")}
-              value={feedbackData.customerInteractions}
+            <TextareaAutosize
+              name="customerInteractionsComment"
+              value={feedbackData.customerInteractionsComment}
+              onChange={(e) =>
+                handleTextareaChange(
+                  "customerInteractionsComment",
+                  e.target.value
+                )
+              }
+              placeholder="customerInteractionsComment "
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                marginTop: "10px",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
             />
-
+            <FormControl fullWidth margin="dense">
+              <InputLabel required>Customer Interactions Rating:</InputLabel>
+              <Rating
+                className="mt-9"
+                name="customerInteractionsRating"
+                value={feedbackData.customerInteractionsRating}
+                onChange={(e) =>
+                  handleRatingChange(
+                    "customerInteractionsRating",
+                    e.target.value
+                  )
+                }
+                error={errors.adaptingToNewTasks}
+                size="large"
+              />
+            </FormControl>
             <FormControl fullWidth margin="dense">
               <InputLabel required>Handling feedback and criticism:</InputLabel>
               <Select
@@ -453,13 +748,89 @@ const handleOnChange=(e) => {
                 </span>
               )}
             </FormControl>
-            <Textarea
-              aria-label="empty textarea"
-              placeholder="Comments"
-              className="m-4"
-              onChange={(e) => handleOnChange(e, "feedbackHandling")}
-              value={feedbackData.feedbackHandling}
+            <TextareaAutosize
+              name="feedbackHandlingComment"
+              value={feedbackData.feedbackHandlingComment}
+              onChange={(e) =>
+                handleTextareaChange("feedbackHandlingComment", e.target.value)
+              }
+              placeholder="feedbackHandlingComment "
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                marginTop: "10px",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
             />
+            <FormControl fullWidth margin="dense">
+              <InputLabel required>Feedback Handling Rating:</InputLabel>
+              <Rating
+                className="mt-9"
+                name="feedbackHandlingRating"
+                value={feedbackData.feedbackHandlingRating}
+                onChange={(e) =>
+                  handleRatingChange("feedbackHandlingRating", e.target.value)
+                }
+                error={errors.adaptingToNewTasks}
+                size="large"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="dense">
+              <InputLabel required>
+                Timely Login and Logout Practices:
+              </InputLabel>
+              <Select
+                value={feedbackData.timingKeepup}
+                name="timingKeepup"
+                onChange={(e) => handleOnChange(e)}
+                label="Timely Login and Logout Practices"
+                error={errors.timingKeepup}
+              >
+                <MenuItem value="consistentlyOnTime">
+                  Consistently On Time
+                </MenuItem>
+                <MenuItem value="occasionalDelays">Occasional Delays</MenuItem>
+                <MenuItem value="challengeswithPunctuality">
+                  Challenges with Punctuality
+                </MenuItem>
+              </Select>
+              {errors.timingKeepup && (
+                <span style={{ color: "red", fontSize: "0.75rem" }}>
+                  {errors.timingKeepup}
+                </span>
+              )}
+            </FormControl>
+            <TextareaAutosize
+              name="timingKeepupComment"
+              value={feedbackData.timingKeepupComment}
+              onChange={(e) =>
+                handleTextareaChange("timingKeepupComment", e.target.value)
+              }
+              placeholder="timingKeepupComment "
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                marginTop: "10px",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
+            />
+            <FormControl fullWidth margin="dense">
+              <InputLabel required>timing Keepup Rating:</InputLabel>
+              <Rating
+                className="mt-9"
+                name="timingKeepupRating"
+                value={feedbackData.timingKeepupRating}
+                onChange={(e) =>
+                  handleRatingChange("timingKeepup", e.target.value)
+                }
+                error={errors.timingKeepup}
+                size="large"
+              />
+            </FormControl>
 
             <Box sx={{ width: 300 }}>
               <h2>Communication Skills</h2>
@@ -477,6 +848,45 @@ const handleOnChange=(e) => {
                 }
               />
             </Box>
+            <Box mt={3}>
+              <Typography variant="h5">Attendance Calculator</Typography>
+            </Box>
+            <Box mt={2}>
+              <TextField
+                label="Total Working Days"
+                type="number"
+                value={totalWorkingDays}
+                onChange={(e) => setTotalWorkingDays(e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+            </Box>
+            <Box mt={2}>
+              <TextField
+                label="Days Present"
+                type="number"
+                value={daysPresent}
+                onChange={(e) => setDaysPresent(e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+            </Box>
+            <Box mt={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleCalculateAttendance}
+              >
+                Calculate Attendance
+              </Button>
+            </Box>
+            {attendancePercentage !== null && (
+              <Box mt={2}>
+                <Typography variant="h6">
+                  Attendance Percentage: {attendancePercentage}%
+                </Typography>
+              </Box>
+            )}
             {/* <Textarea aria-label="empty textarea" placeholder="Comments" className="m-4" onChange={(e) => handleOnChange(e, "mentorshipSupport")}/> */}
           </>
 

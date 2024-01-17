@@ -1,8 +1,10 @@
 const router = require("express").Router();
 
-const {employeeFeedbackSubmit} = require('../controllers/feedbackcontroller');
+const {employeeFeedbackSubmit,getFeedback} = require('../controllers/feedbackcontroller');
 
 
 router.post('/feedback', employeeFeedbackSubmit);
+router.get('/getfeedback', getFeedback);
+
 
 module.exports = router;

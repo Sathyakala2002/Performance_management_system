@@ -47,7 +47,7 @@ const EmployeeForm = () => {
         .then((response) => {
           enqueueSnackbar(response.data.message, { variant: "success" });
           setEmployeeData(initialEmployeeState);
-          navigate('/feedbakform')
+          navigate('/home')
         })
         .catch((error) => {
           console.error("Step 1 API error:", error);
@@ -157,7 +157,7 @@ const EmployeeForm = () => {
       
           <div className="my-5">
             <Button variant="contained" color="primary" fullWidth type="submit">
-              Next
+              Submit
             </Button>
           </div>
         </form>

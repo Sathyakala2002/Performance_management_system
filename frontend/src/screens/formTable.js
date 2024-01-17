@@ -6,11 +6,17 @@ import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import { useSnackbar } from "notistack";
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import IconButton from "@mui/material/IconButton";
+import FeedIcon from '@mui/icons-material/Feed';
+import DeleteIcon from '@mui/icons-material/Delete';
+import {useNavigate } from "react-router-dom"
+import { red } from '@mui/material/colors';
+import  axios  from 'axios';
 
 const Formtable = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState([]);
   const gridRef = useRef();
+  const navigate =useNavigate();
   const defaultColDef = useMemo(
     () => ({
       sortable: true,
@@ -26,12 +32,10 @@ const Formtable = () => {
     { headerName: 'Employee Email', field: 'employee_email' },
     { headerName: 'Gender', field: 'gender' },
     { headerName: 'Employee Role', field: 'role' },
+    { headerName: 'Give feedback', field: 'Give Feedback',cellRenderer:giveFeedbackRenderer },
     { field: "Feedback", headerName: "Feedback", cellRenderer: feedbackRenderer },
-    // {
-    //   field: "delete",
-    //   headerName: "Delete",
-    //   cellRenderer: deleteRenderer,
-    // }
+    { field: "Delete", headerName: "Delete", cellRenderer: deleteRenderer }
+
   ];
   function feedbackRenderer(params) {
     return (
@@ -40,37 +44,83 @@ const Formtable = () => {
           aria-label="delete"
           className="p-3"
           color="primary"
-          onClick={() => handleClickOpen(params.data, params.index)}
+          onClick={() => handleClickFeedbackViewOpen(params.data, params.rowIndex)}
         >
           <FeedbackIcon />
         </IconButton>
       </div>
     );
   }
+  function giveFeedbackRenderer(params) {
+    return (
+      <div>
+        <IconButton
+          aria-label="delete"
+          className="p-3"
+          color="primary"
+          onClick={() => handleGiveFeedbackCickOpen(params.data, params.rowIndex)}
+        >
+          <FeedIcon />
+        </IconButton>
+      </div>
+    );
+  }
+  function deleteRenderer(params) {
+    return (
+      <div>
+        <IconButton
+          aria-label="delete"
+          className="p-3"
+          sx={{ color: red[500] }} 
+          onClick={() => handleDelete(params.data, params.rowIndex)}
+        >
+          <DeleteIcon />
+        </IconButton>
+      </div>
+    );
+  }
 
-  const handleClickOpen = (data, index) =>{
-    
+  const handleClickFeedbackViewOpen = (data, index) => {
+    console.log(data, "hey!");
+    const name = data.employee_name;
+    const employeeID = data.employee_ID;
+
+    // Set employee ID in local storage
+    localStorage.setItem("selectedEmployeeID", employeeID);
+
+    console.log(name);
+    navigate('/feedbackDetails');
+  };
+  
+  const handleGiveFeedbackCickOpen =(data, index) =>{
+    const name = data.employee_name;
+    const employeeID = data.employee_ID;
+
+    // Set employee ID in local storage
+    localStorage.setItem("selectedEmployeeID", employeeID);
+
+    navigate('/feedbakform')
+
+  }
+  const handleDelete =()=>{
+
   }
   useEffect(() => {
     // Function to fetch data
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/getemplyee'); 
-        if (!response) {
-          console.log('Network response was not ok');
-        }
-        const data = await response.json();
+        const response = await axios.get('http://localhost:5000/getemplyee');
+        const data = response.data;
         console.log(data);
         enqueueSnackbar(data.message, { variant: "success" });
-        setRowData(data.db); 
+        setRowData(data.db);
       } catch (error) {
         enqueueSnackbar(error.message, { variant: "error" });
       }
     };
- 
+  
     fetchData();
-  }, []); 
- 
+  }, []);
   return (
     <div className="ag-theme-alpine" style={{ height: '200vh', width: '100%', margin:'80px'}}>
       <Sidebar />
