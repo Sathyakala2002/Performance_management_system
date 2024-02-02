@@ -1,120 +1,149 @@
 const mongoose = require("mongoose");
 
 const feedbackSchema = new mongoose.Schema({
-  employeeNmae : {
-    type : String,
-  },
   adaptingToNewTasks: {
-    type: String,
-  },
-  adaptingToNewTasksComment: {
-    type: String,
-  },
-  adaptingToNewTasksRating: {
-    type: Number,
+    type: {
+      type: String,
+    },
+    comment: {
+      type: String,
+    },
+    rating: {
+      type: Number,
+    },
   },
   collaboration: {
-    type: String,
-  },
-  collaborationComment: {
-    type:String,
-  },
-  collaborationRating:{
-    type :Number,
+    type: {
+      type: String,
+    },
+    comment: {
+      type: String,
+    },
+    rating: {
+      type: Number,
+    },
   },
   communicationSkills: {
-    type: Number,
+    type: {
+      type: String,
+    },
+    comment: {
+      type: String,
+    },
+    rating: {
+      type: Number,
+    },
   },
-  conflictHandling: {
-    type: String,
-  },
-  conflictHandlingComment: {
-    type: String,
-  },
-  conflictHandlingRating: {
-    type: Number,
+  ConflictHandling: {
+    type: {
+      type: String,
+    },
+    comment: {
+      type: String,
+    },
+    rating: {
+      type: Number,
+    },
   },
   customerInteractions: {
-    type: String,
-  },
-  customerInteractionsComment: {
-    type: String,
-  },
-  customerInteractionsRating: {
-    type: Number,
+    type: {
+      type: String,
+    },
+    comment: {
+      type: String,
+    },
+    rating: {
+      type: Number,
+    },
   },
   ethicalBehavior: {
-    type: String,
-  },
-  ethicalBehaviorComment: {
-    type: String,
-  },
-  ethicalBehaviorRating: {
-    type: Number,
+    type: {
+      type: String,
+    },
+    comment: {
+      type: String,
+    },
+    rating: {
+      type: Number,
+    },
   },
   feedbackHandling: {
-    type: String,
-  },
-  feedbackHandlingComment: {
-    type: String,
-  },
-  feedbackHandlingRating: {
-    type: Number,
+    type: {
+      type: String,
+    },
+    comment: {
+      type: String,
+    },
+    rating: {
+      type: Number,
+    },
   },
   initiative: {
-    type: String,
-  },
-  initiativeComment: {
-    type: String,
-    default: "",
-  },
-  initiativeRating: {
-    type: Number,
+    type: {
+      type: String,
+    },
+    comment: {
+      type: String,
+      default: "",
+    },
+    rating: {
+      type: Number,
+    },
   },
   meetingDeadlines: {
-    type: String,
-  },
-  meetingDeadlinesComment: {
-    type: String,
-  },
-  meetingDeadlinesRating: {
-    type: Number,
+    type: {
+      type: String,
+    },
+    comment: {
+      type: String,
+    },
+    rating: {
+      type: Number,
+    },
   },
   mentorshipSupport: {
-    type: String,
-  },
-  mentorshipSupportComment: {
-    type: String,
-  },
-  mentorshipSupportRating: {
-    type: Number,
+    type: {
+      type: String,
+    },
+    comment: {
+      type: String,
+    },
+    rating: {
+      type: Number,
+    },
   },
   taskCompletion: {
+    type: {
+      type: String,
+    },
+    comment: {
+      type: String,
+      default: "",
+    },
+    rating: {
+      type: Number,
+    },
+  },
+  timingKeepup: {
+    type: {
+      type: String,
+    },
+    comment: {
+      type: String,
+      default: "",
+    },
+    rating: {
+      type: Number,
+    },
+  },
+  attendancePercentage: {
+    attendancePercentage:{
+      type: Number,
+    }
+  },
+  storedEmployeeID:{
     type: String,
-  },
-  taskCompletionComment: {
-    type: String,
-    default: "",
-  },
-  taskCompletionRating: {
-    type: Number,
-  },
-  timingKeepup
-: {
-    type: String,
-  },
-  timingKeepupComment: {
-    type: String,
-    default: "",
-  },
-  timingKeepupRating: {
-    type: Number,
-  },
-  attendancePercentage:{
-    type:Number,
-  },
-  
-  
+  }
 });
 
 module.exports = mongoose.model("Feedback", feedbackSchema);

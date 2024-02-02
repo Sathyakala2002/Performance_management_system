@@ -1,26 +1,42 @@
 // App.js
-import React from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Sidebar from './screens/sidebar';
-import EmployeeForm from './screens/employeeForm';
-import Dashboard from './screens/dashboard'
-import Formtable from './screens/formTable'
-import FeedbackForm from './screens/feedbackForm'
-import FeedbackDetails from './screens/feedbackDetails'
+// import EmployeeForm from './screens/employeeForm';
+import Formtable from './screens/employeeTable'
+import PageDisplay from './Formpages'
+import FeedbackForm from './screens/Employeefeedback'
 import Home from './screens/home'
+import Navbar from './layout/navbar'
+import SignIn from './auth/singin';
+import SignUp from './auth/signup';
+import { Bar } from './layout/m';
+import AuthContext from "./context/AuthContext";
 
 
 function App() {
+  const { loggedIn } = useContext(AuthContext);
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Sidebar/>} />
-        <Route path="/home" element={<Home/>} />
-        <Route path="/dashboard" element={<Dashboard/>} />
-        <Route path="/forms" element={<EmployeeForm />} />
-        <Route path="/feedbackform" element={<FeedbackForm />} />
-        <Route path="/table" element={<Formtable />} />
-        <Route path="/feedbackDetails" element={<FeedbackDetails />} />
+      {loggedIn === false && (
+        <>
+        <Route path="/" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        </>
+        )}
+
+         {/* <Route path="/" element={<S />} /> */}
+        {loggedIn === true && (
+          <>
+          <Route path="/home" element={<Home />} />
+          <Route path="/navbar" element={<Navbar />} />
+          {/* <Route path="/forms" element={<EmployeeForm />} /> */}
+          <Route path="/feedbackform" element={<PageDisplay />} />
+          <Route path="/table" element={<Formtable />} />
+          <Route path="/feedbackDetails" element={<FeedbackForm />} />
+          </>
+          )}  
       </Routes>
     </Router>
   );

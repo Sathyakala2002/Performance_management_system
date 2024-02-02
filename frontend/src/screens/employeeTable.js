@@ -1,5 +1,5 @@
 import React, { useState, useEffect,useRef, useMemo} from 'react';
-import Sidebar from './sidebar';
+import Sidebar from '../layout/Sidebar';
 import { AgGridReact } from "ag-grid-react"; // the AG Grid React Component
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
@@ -11,10 +11,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import {useNavigate } from "react-router-dom"
 import { red } from '@mui/material/colors';
 import  axios  from 'axios';
+import { Bar } from '../layout/m';
 
 const Formtable = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState([]);
+  const [disable,setDisable] = useState(false);
   const gridRef = useRef();
   const navigate =useNavigate();
   const defaultColDef = useMemo(
@@ -59,12 +61,14 @@ const Formtable = () => {
           className="p-3"
           color="primary"
           onClick={() => handleGiveFeedbackCickOpen(params.data, params.rowIndex)}
+          disabled={disable}
         >
           <FeedIcon />
         </IconButton>
       </div>
     );
   }
+  
   function deleteRenderer(params) {
     return (
       <div>
@@ -81,27 +85,18 @@ const Formtable = () => {
   }
 
   const handleClickFeedbackViewOpen = (data, index) => {
-    console.log(data, "hey!");
-    const name = data.employee_name;
     const employeeID = data.employee_ID;
-
-    // Set employee ID in local storage
     localStorage.setItem("selectedEmployeeID", employeeID);
-
-    console.log(name);
     navigate('/feedbackDetails');
   };
   
-  const handleGiveFeedbackCickOpen =(data, index) =>{
-    const name = data.employee_name;
+  const handleGiveFeedbackCickOpen = (data, index) => {
     const employeeID = data.employee_ID;
-
-    // Set employee ID in local storage
     localStorage.setItem("selectedEmployeeID", employeeID);
-
-    navigate('/feedbakform')
-
-  }
+    navigate('/feedbackform')
+    // setDisable(true);
+  };
+  
   const handleDelete =()=>{
 
   }
@@ -122,10 +117,11 @@ const Formtable = () => {
     fetchData();
   }, []);
   return (
-    <div className="ag-theme-alpine" style={{ height: '200vh', width: '100%', margin:'80px'}}>
-      <Sidebar />
-      <AgGridReact
+    <div>
+      <Bar/>
+    <div className="ag-theme-alpine" style={{ height: '100vh', width: '100%', margin:'100px 0px 0px 350px'}}>
       
+      <AgGridReact
           ref={gridRef} 
           rowData={rowData}
           columnDefs={columnDefs} 
@@ -133,6 +129,7 @@ const Formtable = () => {
           animateRows={true} 
           rowSelection="multiple" 
         />
+    </div>
     </div>
   );
 };

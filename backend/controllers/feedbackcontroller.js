@@ -3,11 +3,10 @@ const employeefeedback = require("../models/feedbackSchema");
 
 const getFeedback = async (req, res) => {
   try {
-    const db = await employeefeedback.find();
-    console.log(db);
+    const db = await employeefeedback.find().select('-_id -__v');
 
     if (db.length > 0) {
-      return res.status(200).json({ message: "Data fetched successfully", db });
+      return res.status(200).json({ message: "Data fetched successfully", db});
     } else {
       return res.status(404).json({ message: "No data found in the DB" });
     }
@@ -20,81 +19,42 @@ const getFeedback = async (req, res) => {
 const employeeFeedbackSubmit = async (req, res) => {
   try {
     const {
-      taskCompletion,
-      taskCompletionComment,
-      taskCompletionRating,
-      meetingDeadlines,
-      meetingDeadlinesComment,
-      meetingDeadlinesRating,
-      initiative,
-      initiativeComment,
-      initiativeRating,
-      collaboration,
-      collaborationComment,
-      collaborationRating,
-      adaptingToNewTasks,
-      adaptingToNewTasksComment,
-      adaptingToNewTasksRating,
-      conflictHandling,
-      conflictHandlingcomment,
-      conflictHandlingRating,
-      mentorshipSupport,
-      mentorshipSupportComment,
-      mentorshipSupportRating,
-      ethicalBehavior,
-      ethicalBehaviorComment,
-      ethicalBehaviorRating,
-      customerInteractions,
-      customerInteractionsComment,
-      customerInteractionsRating,
-      feedbackHandling,
-      feedbackHandlingComment,
-      feedbackHandlingRating,
-      timingKeepup,
-      timingKeepupComment,
-      timingKeepupRating,
-      attendancePercentage,
-      communicationSkills
+      formattedFeedbackData,
+      storedEmployeeID
     } = req.body || {};
+    const {
+      adaptingToNewTasks,
+      collaboration,
+      communicationSkills,
+      conflictHandling,
+      customerInteractions,
+      ethicalBehavior,
+      feedbackHandling,
+      initiative,
+      meetingDeadlines,
+      mentorshipSupport,
+      taskCompletion,
+      timingKeepup,
+      attendancePercentage,
+  
+    } = formattedFeedbackData || {};
 
     const newUser = new employeefeedback({
-      taskCompletion,
-      taskCompletionComment,
-      taskCompletionRating,
-      meetingDeadlines,
-      meetingDeadlinesComment,
-      meetingDeadlinesRating,
-      initiative,
-      initiativeComment,
-      initiativeRating,
-      collaboration,
-      collaborationComment,
-      collaborationRating,
       adaptingToNewTasks,
-      adaptingToNewTasksComment,
-      adaptingToNewTasksRating,
+      collaboration,
+      communicationSkills,
       conflictHandling,
-      conflictHandlingcomment,
-      conflictHandlingRating,
-      mentorshipSupport,
-      mentorshipSupportComment,
-      mentorshipSupportRating,
-      ethicalBehavior,
-      ethicalBehaviorComment,
-      ethicalBehaviorRating,
       customerInteractions,
-      customerInteractionsComment,
-      customerInteractionsRating,
+      ethicalBehavior,
       feedbackHandling,
-      feedbackHandlingComment,
-      feedbackHandlingRating,
+      initiative,
+      meetingDeadlines,
+      mentorshipSupport,
+      taskCompletion,
       timingKeepup,
-      timingKeepupComment,
-      timingKeepupRating,
       attendancePercentage,
-      communicationSkills
+      storedEmployeeID
     });
-
     const result = await newUser.save();
     return res.status(200).json({ message: "Stored successfully!", result });
   } catch (error) {

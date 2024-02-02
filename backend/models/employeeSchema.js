@@ -10,7 +10,9 @@ const employeSchema = new mongoose.Schema({
   employee_email: {
     type: String,
   },
-  
+  password: {
+    type: String,
+  }, 
   gender: {
     type: String,
   },

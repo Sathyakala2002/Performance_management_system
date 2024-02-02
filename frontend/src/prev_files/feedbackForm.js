@@ -14,18 +14,10 @@ import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { TextareaAutosize, Typography } from "@mui/material";
 
-import Sidebar from "./sidebar";
 import axios from "axios";
+import { Bar } from "../layout/m";
 
 const FeedbackForm = () => {
-  const marks = [
-    { value: 20, label: "Need improvement" },
-    { value: 50, label: "Good" },
-    { value: 90, label: "Excellent" },
-  ];
-  function valuetext(value: number) {
-    return `${value}`;
-  }
 
   const initialFeedbackState = {
     employeeId:"",
@@ -51,8 +43,9 @@ const FeedbackForm = () => {
     feedbackHandlingComment: "",
     timingKeepup: "",
     timingKeepupComment: "",
+    communicationSkills: "",
+    communicationSkillsComment: "",
     attendancePercentage: null,
-    communicationSkills: 0,
     taskCompletionRating: 0,
     meetingDeadlinesRating: 0,
     initiativeRating: 0,
@@ -64,6 +57,7 @@ const FeedbackForm = () => {
     customerInteractionsRating: 0,
     feedbackHandlingRating: 0,
     timingKeepupRating: 0,
+    communicationRating: 0
   };
 
   const { enqueueSnackbar } = useSnackbar();
@@ -88,7 +82,7 @@ const FeedbackForm = () => {
     timingKeepup: "",
     attendancePercentage: null,
   });
-
+  const storedEmployeeID = localStorage.getItem("selectedEmployeeID");
   const handleOnChange = (e) => {
     const { value, name } = e.target;
     setFeedbackData((prevData) => ({
@@ -137,7 +131,7 @@ const FeedbackForm = () => {
       [name]: value,
     }));
   };
-  console.log(feedbackData);
+  console.log(feedbackData,"feedbackData");
   useEffect(() => {
 
 const fetchEmployeeData = async () => {
@@ -150,52 +144,114 @@ const fetchEmployeeData = async () => {
     const data = await response.json();
     console.log(data);
     enqueueSnackbar(data.message, { variant: "success" });
-    setEmployeeList(data.db); // Update employee list state
-
+    setEmployeeList(data.db); 
   } catch (error) {
     enqueueSnackbar(error.message, { variant: "error" });
   }
 };
 
+
+
 fetchEmployeeData();
 }, []); 
-console.log(employeeList,"ayyo samy!");
-  const handleOnSubmit = async (e) => {
-    e.preventDefault();
-    await axios
-      .post("http://localhost:5000/feedback", feedbackData)
-      .then((response) => {
-        enqueueSnackbar(response.data.message, { variant: "success" });
-        console.log("Form submitted:", feedbackData);
-        setFeedbackData(initialFeedbackState);
-        navigate("/table");
-      })
-      .catch((error) => {
-        console.error("API error:", error);
-      });
+
+const handleOnSubmit = async (e) => {
+  e.preventDefault();
+
+  // Structure feedbackData based on the schema
+  const formattedFeedbackData = {
+    employeeName: "",
+    adaptingToNewTasks: {
+      type: feedbackData.adaptingToNewTasks || "",
+      comment: feedbackData.adaptingToNewTasksComment || "",
+      rating: feedbackData.adaptingToNewTasksRating || 0,
+    },
+    collaboration: {
+      type: feedbackData.collaboration || "",
+      comment: feedbackData.collaborationComment || "",
+      rating: feedbackData.collaborationRating || 0,
+    },
+    communicationSkills: feedbackData.communicationSkills || 0,
+    conflictHandling: {
+      type: feedbackData.conflictHandling || "",
+      comment: feedbackData.conflictHandlingComment || "",
+      rating: feedbackData.conflictHandlingRating || 0,
+    },
+    customerInteractions: {
+      type: feedbackData.customerInteractions || "",
+      comment: feedbackData.customerInteractionsComment || "",
+      rating: feedbackData.customerInteractionsRating || 0,
+    },
+    ethicalBehavior: {
+      type: feedbackData.ethicalBehavior || "",
+      comment: feedbackData.ethicalBehaviorComment || "",
+      rating: feedbackData.ethicalBehaviorRating || 0,
+    },
+    feedbackHandling: {
+      type: feedbackData.feedbackHandling || "",
+      comment: feedbackData.feedbackHandlingComment || "",
+      rating: feedbackData.feedbackHandlingRating || 0,
+    },
+    initiative: {
+      type: feedbackData.initiative || "",
+      comment: feedbackData.initiativeComment || "",
+      rating: feedbackData.initiativeRating || 0,
+    },
+    meetingDeadlines: {
+      type: feedbackData.meetingDeadlines || "",
+      comment: feedbackData.meetingDeadlinesComment || "",
+      rating: feedbackData.meetingDeadlinesRating || 0,
+    },
+    mentorshipSupport: {
+      type: feedbackData.mentorshipSupport || "",
+      comment: feedbackData.mentorshipSupportComment || "",
+      rating: feedbackData.mentorshipSupportRating || 0,
+    },
+    taskCompletion: {
+      type: feedbackData.taskCompletion || "",
+      comment: feedbackData.taskCompletionComment || "",
+      rating: feedbackData.taskCompletionRating || 0,
+    },
+    timingKeepup: {
+      type: feedbackData.timingKeepup || "",
+      comment: feedbackData.timingKeepupComment || "",
+      rating: feedbackData.timingKeepupRating || 0,
+    },
+    attendancePercentage: feedbackData.attendancePercentage || 0,
   };
+
+  await axios
+    .post("http://localhost:5000/feedback", formattedFeedbackData)
+    .then((response) => {
+      enqueueSnackbar(response.data.message, { variant: "success" });
+      console.log("Form submitted:", formattedFeedbackData);
+      setFeedbackData(initialFeedbackState);
+      navigate("/table");
+    })
+    .catch((error) => {
+      console.error("API error:", error);
+    });
+};
+
 
   return (
     <div>
-      <Sidebar/>
-    
+      <Bar/>
       <div
-        className="shadow-md p-8 md:w-96 w-fit mx-auto mt-12 flex items-center justify-center"
-        style={{ width: "50%", height: "80%" }}
-      >
-        
+  className="shadow-md p-8 w-96 mx-auto mt-12 flex items-center justify-center"
+  style={{ width: "50%", height: "80%"}}
+>
         <form method="post" onSubmit={(e) => handleOnSubmit(e)}>
         <div  className="mx-auto mt-12 ">
 <FormControl fullWidth margin="dense">
         <InputLabel required>Select employee Id:</InputLabel>
         <Select
-  value={feedbackData.employeeId}
+  value={storedEmployeeID}
   name="employeeId"
   onChange={(e) => handleOnChange(e)}
   label="Employee Id"
   error={errors.employeeId}
 >
-  {/* Map over the employeeList and create MenuItem for each employee */}
   {employeeList.map((employee) => (
     <MenuItem key={employee.employee_ID} value={employee.employee_ID}>
       {employee.employee_ID}
@@ -224,13 +280,13 @@ console.log(employeeList,"ayyo samy!");
                 label="Task Completion"
                 error={errors.taskCompletion}
               >
-                <MenuItem value="better">
+                <MenuItem value="Always Completes Tasks on Time">
                   Always Completes Tasks on Time
                 </MenuItem>
-                <MenuItem value="moderate">
+                <MenuItem value="Often Completes Tasks on Time">
                   Often Completes Tasks on Time
                 </MenuItem>
-                <MenuItem value="poor">Rarely Completes Tasks on Time</MenuItem>
+                <MenuItem value="Rarely Completes Tasks on Time">Rarely Completes Tasks on Time</MenuItem>
               </Select>
               {errors.taskCompletion && (
                 <span style={{ color: "red", fontSize: "0.75rem" }}>
@@ -244,7 +300,7 @@ console.log(employeeList,"ayyo samy!");
               onChange={(e) =>
                 handleTextareaChange("taskCompletionComment", e.target.value)
               }
-              placeholder="taskCompletionComment "
+              placeholder="Comment "
               style={{
                 width: "100%",
                 marginBottom: "10px",
@@ -280,7 +336,7 @@ console.log(employeeList,"ayyo samy!");
                 label="Meeting Deadlines"
                 error={errors.meetingDeadlines}
               >
-                <MenuItem value="alwaysMeets">Always Meets Deadlines</MenuItem>
+                <MenuItem value="Always Meets Deadlines">Always Meets Deadlines</MenuItem>
                 <MenuItem value="oftenMeets">Often Meets Deadlines</MenuItem>
                 <MenuItem value="frequentlyMisses">
                   Frequently Misses Deadlines
@@ -831,23 +887,60 @@ console.log(employeeList,"ayyo samy!");
                 size="large"
               />
             </FormControl>
-
-            <Box sx={{ width: 300 }}>
-              <h2>Communication Skills</h2>
-              <Slider
-                aria-label="Communication Skills"
-                defaultValue={feedbackData.communicationSkills}
-                getAriaValueText={valuetext}
-                step={10}
-                marks={marks}
-                valueLabelDisplay="on"
-                onChange={(e, value) =>
-                  handleOnChange({
-                    target: { name: "communicationSkills", value },
-                  })
+            <FormControl fullWidth margin="dense">
+              <InputLabel required>
+                Communication Skills
+              </InputLabel>
+              <Select
+                value={feedbackData.communicationSkills}
+                name="communicationSkills"
+                onChange={(e) => handleOnChange(e)}
+                label="Communication skills"
+                error={errors.communicationSkills}
+              >
+                <MenuItem value="Excellent">
+                  Excellent
+                </MenuItem>
+                <MenuItem value="Good">Good</MenuItem>
+                <MenuItem value="Need Improvement">
+                  Need Improvement
+                </MenuItem>
+              </Select>
+              {errors.communicationSkills && (
+                <span style={{ color: "red", fontSize: "0.75rem" }}>
+                  {errors.communicationSkills}
+                </span>
+              )}
+            </FormControl>
+            <TextareaAutosize
+              name="communicationSkillsComment"
+              value={feedbackData.communicationSkillsComment}
+              onChange={(e) =>
+                handleTextareaChange("communicationSkillsComment", e.target.value)
+              }
+              placeholder="comment"
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                marginTop: "10px",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
+            />
+            <FormControl fullWidth margin="dense">
+              <InputLabel required>Communication Rating:</InputLabel>
+              <Rating
+                className="mt-9"
+                name="communicationRating"
+                value={feedbackData.communicationRating}
+                onChange={(e) =>
+                  handleRatingChange("communicationRating", e.target.value)
                 }
+                error={errors.communicationSkills}
+                size="large"
               />
-            </Box>
+            </FormControl>
             <Box mt={3}>
               <Typography variant="h5">Attendance Calculator</Typography>
             </Box>

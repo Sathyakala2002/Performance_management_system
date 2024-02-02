@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {TextField,Button,MenuItem,FormControl,InputLabel,Box,Slider,Radio,RadioGroup,FormLabel,FormControlLabel,Rating,Select, } from "@mui/material";
-import Sidebar from "./sidebar";
+import Sidebar from "../layout/Sidebar";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import {useNavigate} from "react-router-dom"
+import AuthContext from "../context/AuthContext";
 
-const EmployeeForm = () => {
+
+const SignUp = () => {
+  const { getLoggedIn } = useContext(AuthContext);
 
   const initialEmployeeState = {
     employee_name: "",
     employee_ID: "",
     employee_email: "",
+    password: "",
     gender: "",
     role: "",
     age: "",
@@ -27,8 +31,7 @@ const EmployeeForm = () => {
     confirmPassword: "",
     role: "",
     age: "",
-    taskCompletion: "", // Adjusted for Step 2
-
+    taskCompletion: "", 
   });
 
   const handleOnChange = (e) => {
@@ -40,27 +43,36 @@ const EmployeeForm = () => {
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const handleOnSubmit = async (e) => {
+  const handleOnSubmit = (e) => {
     e.preventDefault();
-      await axios
-        .post("http://localhost:5000/employee", employeeData)
-        .then((response) => {
+    axios
+      .post("http://localhost:5000/employee", employeeData)
+      .then((response) => {
+        const { token } = response.data || {};
+        localStorage.setItem("token", token);
+        
+        setEmployeeData(initialEmployeeState);
+        navigate('/signin')
+        if (response.data.message) {
+          console.log(response.data.message);
           enqueueSnackbar(response.data.message, { variant: "success" });
-          setEmployeeData(initialEmployeeState);
-          navigate('/home')
-        })
-        .catch((error) => {
-          console.error("Step 1 API error:", error);
-        })
+          getLoggedIn();
+          // navigate("/signin");
+        }
+      })
+      .catch((err) => {
+        if (err.response && err.response.data && err.response.data.message) {
+          console.log(err.response.data.message);
+        }
+      });
   };
 
   return (
     <div>
-      <Sidebar />
       <div className="shadow-md p-8 md:w-96 w-fit mx-auto mt-12 flex items-center justify-center h-full">
         <form method="post" onSubmit={(e) => handleOnSubmit(e)}>
           <h1 className="text-center font-semibold text-blue-800 text-2xl">
-            Employee Detials
+            Sign up
           </h1>
             <>
               <TextField
@@ -97,6 +109,20 @@ const EmployeeForm = () => {
                 helperText={errors.employee_email}
                 margin="dense"
               />
+
+              <TextField
+                label="password"
+                name="password"
+                type="password"
+                value={employeeData.password}
+                onChange={(e) => handleOnChange(e)}
+                variant="outlined"
+                fullWidth
+                error={errors.employee_email}
+                helperText={errors.employee_email}
+                margin="dense"
+              />
+
               <FormControl fullWidth margin="dense">
                 <InputLabel>Role</InputLabel>
                 <Select
@@ -166,4 +192,4 @@ const EmployeeForm = () => {
   );
 };
 
-export default EmployeeForm;
+export default SignUp;

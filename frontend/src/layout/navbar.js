@@ -1,40 +1,104 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Icon } from "react-icons-kit";
-import { bars } from "react-icons-kit/fa/bars"; // Import the menu icon
+import React from "react";
+import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import { styled } from "@mui/material/styles";
+import Button from "@mui/material/Button";
+import { Link } from "react-router-dom";
 
-import Sidebar from "../screens/sidebar";
+const CustomButton = styled(Button)(() => ({
+  color: "white",
+  backgroundColor: "purple",
+  "&:hover": {
+    backgroundColor: "pink",
+    margin: "3px",
+  },
+}));
+
+const Root = styled("div")(() => ({
+  flexGrow: 1,
+}));
+
+const MenuButton = styled(IconButton)(({ theme }) => ({
+  marginRight: theme.spacing(2),
+}));
+
+const Title = styled(Typography)(({ theme }) => ({
+  flexGrow: 1,
+}));
+
+const LinkText = styled(Link)(({ theme }) => ({
+  color: "white",
+  textDecoration: "none",
+}));
+
+const DrawerContainer = styled("div")(({ theme }) => ({
+  width: 250,
+}));
 
 function Navbar() {
-  const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [open, setOpen] = React.useState(false);
 
-
-  const handleMenuClick = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+  const handleDrawerOpen = () => {
+    setOpen(true);
   };
 
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
+  const pages = [
+    {
+      name: "Home",
+      path: "/home",
+    },
+    {
+      name: "Form",
+      path: "/feedbackform",
+    },
+    {
+      name: "Dashboard",
+      path: "/feedbackDetails",
+    },
+    {
+      name: "Table",
+      path: "/table",
+    },
+  ];
+
   return (
-    <div>
-      <nav className="flex items-center justify-between bg-cyan-300 dark:bg-gray-900 p-4">
-      <div className="flex items-center space-x-3">
-        <Icon icon={bars} size={24} onClick={handleMenuClick} className="cursor-pointer" />
-        <a href="#" className="hidden md:flex items-center">
-          <span className="text-2xl font-semibold">Performance Management system</span>
-        </a>
-      </div>
-
-        <a href="#" className="hidden md:flex items-center">
-          <img src="profile.webp" className="h-8 rounded-full" alt="Profile" />
-        </a>
-      </nav>
-
-      {isSidebarOpen && (
-        <div >
-          <Sidebar />
-        </div>
-      )}
-    </div>
+    <Root>
+      <AppBar position="static" sx={{ backgroundColor: "white",marginTop:"10px" }}>
+        <Toolbar>
+          <MenuButton
+            edge="start"
+            sx={{ backgroundColor: "white" }}
+            aria-label="menu"
+            onClick={handleDrawerOpen}
+          >
+            <MenuIcon />
+          </MenuButton>
+          
+          <Title variant="h6">Navbar</Title>
+          <CustomButton color="inherit">
+            <LinkText to="/signin">Sign In</LinkText>
+          </CustomButton>
+          <CustomButton color="inherit">
+            <LinkText to="/signup">Sign Up</LinkText>
+          </CustomButton>
+        </Toolbar>
+      </AppBar>
+      <Drawer anchor="left" open={open} onClose={handleDrawerClose}>
+        <DrawerContainer>
+          <List>
+            {pages.map(({ name, path }) => (
+              <ListItem key={name} component={Link} to={path}>
+                <ListItemText primary={name} />
+              </ListItem>
+            ))}
+          </List>
+        </DrawerContainer>
+      </Drawer>
+    </Root>
   );
 }
 
