@@ -10,10 +10,9 @@ const Step = ({ step, title, active }) => {
   const handleClick = () => {
     dispatch(setPage(step - 1));
   };
+  console.log(feedbackWithEmptyValues,"stepfafwegwg");
 
   const hasEmptyValues = feedbackWithEmptyValues.some(([feedbackTitle]) => feedbackTitle === title);
-  console.log(hasEmptyValues, "found ");
-
   return (
     <div className={`Step ${active ? 'active' : ''}`} onClick={handleClick}>
       <span className={active ? 'stepNumber active' : 'stepNumber'}>{step}</span>
@@ -21,8 +20,7 @@ const Step = ({ step, title, active }) => {
         <span>STEP {step}</span>
         <p>
           {title}
-          {hasEmptyValues && <div className="non-filled-mark text-red-500 text-2xl">&#10006;</div>}
-          {/* {active &&(!hasEmptyValues && <div className="tick-mark">&#10004;</div>)} */}
+          {hasEmptyValues && <span className="non-filled-mark text-red-500 text-2xl">&#10006;</span>}
         </p>
       </div>
     </div>

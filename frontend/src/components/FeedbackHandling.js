@@ -104,7 +104,7 @@ const FeedbackHandling = () => {
           />
         </div>
   
-        <div className="mb-8">
+        <div className="mb-0">
           <h2 className="text-2xl font-semibold mb-4">Handling feedback and criticism Rating :</h2>
           <FormControl fullWidth margin="dense">
             <Rating

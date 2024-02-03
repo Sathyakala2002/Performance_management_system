@@ -114,7 +114,7 @@ const EthicalBehavior = () => {
           <h2 className="text-2xl font-semibold mb-4">Ethical behavior Rating :</h2>
           <FormControl fullWidth margin="dense">
             <Rating
-              className="mt-3"
+              className="mt-0"
               name="ethicalBehaviorRating"
               value={feedbackData.ethicalBehaviorRating}
               onChange={(e) => handleRatingChange("ethicalBehaviorRating", e.target.value)}

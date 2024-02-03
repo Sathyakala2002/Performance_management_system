@@ -114,7 +114,7 @@ const CommunicationSkills = () => {
           <h2 className="text-2xl font-semibold mb-4">Communication Skills Rating :</h2>
           <FormControl fullWidth margin="dense">
             <Rating
-              className="mt-3"
+              className="mt-0"
               name="communicationSkillsRating"
               value={feedbackData.communicationSkillsRating}
               onChange={(e) => handleRatingChange("communicationSkillsRating", e.target.value)}

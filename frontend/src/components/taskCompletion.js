@@ -103,7 +103,7 @@ const TaskCompletion = () => {
           <h2 className="text-2xl font-semibold mb-4">Task Completion Rating :</h2>
           <FormControl fullWidth margin="dense">
             <Rating
-              className="mt-3"
+              className="mt-0"
               name="taskCompletionRating"
               value={feedbackData.taskCompletionRating}
               onChange={(e) => handleRatingChange("taskCompletionRating", e.target.value)}

@@ -113,7 +113,7 @@ const Collaboration = () => {
           <h2 className="text-2xl font-semibold mb-4">Collaboration Rating :</h2>
           <FormControl fullWidth margin="dense">
             <Rating
-              className="mt-3"
+              className="mt-0"
               name="collaborationRating"
               value={feedbackData.collaborationRating}
               onChange={(e) => handleRatingChange("collaborationRating", e.target.value)}

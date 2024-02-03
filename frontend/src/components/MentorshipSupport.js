@@ -111,7 +111,7 @@ const MentorshipSupport = () => {
           <h2 className="text-2xl font-semibold mb-4">mentorship for colleagues Rating :</h2>
           <FormControl fullWidth margin="dense">
             <Rating
-              className="mt-3"
+              className="mt-0"
               name="mentorshipSupportRating"
               value={feedbackData.mentorshipSupportRating}
               onChange={(e) => handleRatingChange("mentorshipSupportRating", e.target.value)}

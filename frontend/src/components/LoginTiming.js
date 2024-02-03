@@ -112,7 +112,7 @@ const dispatch = useDispatch();
           <h2 className="text-2xl font-semibold mb-4">Login and Logout Practices Rating :</h2>
           <FormControl fullWidth margin="dense">
             <Rating
-              className="mt-3"
+              className="mt-0"
               name="timingKeepupRating"
               value={feedbackData.timingKeepupRating}
               onChange={(e) => handleRatingChange("timingKeepupRating", e.target.value)}

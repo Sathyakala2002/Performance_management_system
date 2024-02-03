@@ -16,20 +16,25 @@ const Submitpage = () => {
   const [missedFeedback, setMissedfeedback] = useState([]);
   const formattedFeedbackData = useSelector(selectFeedbackData);
   const storedEmployeeID = localStorage.getItem("selectedEmployeeID");
-  console.log(storedEmployeeID,"selected ID");
+  console.log(formattedFeedbackData,"mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
 
   const handleSubmit = async (e) => {
   e.preventDefault();
 
+
   const feedbackWithEmptyValues = Object.entries(formattedFeedbackData)?.filter(
-    ([title, feedback]) => !feedback?.type?.trim() || feedback?.attendancePercentage === "");
-    if (feedbackWithEmptyValues.length > 0) {
+    ([title, feedback]) => 
+      (feedback?.attendancePercentage === null || !feedback?.attendancePercentage.trim()) || !feedback?.type?.trim() 
+  );
+  
+  if (feedbackWithEmptyValues.length > 0) {
     console.error('Error: Some feedback titles have empty values or ratings');  
     console.log('Feedback with empty values:', feedbackWithEmptyValues);
     setFeedbackData(feedbackWithEmptyValues);
     setMissedfeedback(feedbackWithEmptyValues);
     return;
   }
+  
 
   try {
     await axios.post('http://localhost:5000/feedback', { formattedFeedbackData, storedEmployeeID })
@@ -42,15 +47,15 @@ const Submitpage = () => {
   }
 };
 console.log(missedFeedback,"gwgrwgrehteh");
-const handleMissedFeedback = () => {
-  return (
-    <div>
-      {missedFeedback && missedFeedback.map((feedback, index) => (
-        <h1 key={index}>{feedback}</h1>
-      ))}
-    </div>
-  );
-};
+// const handleMissedFeedback = () => {
+//   return (
+//     <div>
+//       {missedFeedback && missedFeedback.map((feedback, index) => (
+//         <h1 key={index}>{feedback}</h1>
+//       ))}
+//     </div>
+//   );
+// };
 
   return (
     <div className="flex flex-col items-center justify-between">
@@ -70,7 +75,7 @@ const handleMissedFeedback = () => {
          {missedFeedback && (
         <Typography style={{ color: "black", fontWeight: "bold", marginTop: "10px" }}>
           You missed some feedbacks!
-          <Button onClick={handleMissedFeedback}>Click to View</Button>
+          {/* <Button onClick={handleMissedFeedback}>Click to View</Button> */}
         </Typography>
       )}
       </form>

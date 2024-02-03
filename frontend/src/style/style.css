@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Rubik:wght@400;500&family=Ubuntu:wght@400;500;700&display=swap");
+
 * {
   margin: 0;
   padding: 0;
@@ -14,7 +15,7 @@ body {
 }
 
 .tick-mark {
-  color: #0b3e0d; 
+  color: #0b3e0d;
   font-size: 18px;
   margin-left: auto;
 }
@@ -31,7 +32,7 @@ main {
 }
 
 .Container {
-  min-width: 900px;
+  min-width: 1000px;
   height: 600px;
   background-color: white;
   margin: auto;
@@ -44,25 +45,48 @@ main {
   box-shadow: 0 5px 10px #d6d9e6;
   background-image: url(../assets/images/performance.png);
   background-repeat: no-repeat;
-  background-size: contain; /* or contain */
-  
-
+  background-size: contain;
 }
 
 .content {
-  min-width: 100%;
+  min-width: 60%;
   margin: auto;
   height: 100%;
   position: relative;
   padding-top: 30px;
-
 }
-
 
 .Steps-content {
   padding-top: 10px;
 }
 
+.Step {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 5px;
+  margin: 30px 40px;
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+}
+
+.Steps {
+  position: relative;
+  width: 80%;
+  height: 100%;
+  overflow-y: scroll;
+  font-weight: 100;
+}
+
+.Steps::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 30%;
+  height: 100%;
+  border-radius: 1rem;
+}
 
 .Step .stepNumber {
   margin-right: 15px;
@@ -111,6 +135,7 @@ main {
   border: none;
   color: #9699ab;
 }
+
 .navigation .btn1:hover {
   border: none;
   color: #172ca3;
@@ -139,11 +164,13 @@ p {
   font-size: 16px;
   color: #9699ab;
 }
+
 @media (max-width: 768px) {
   main {
     width: 100%;
     height: auto;
   }
+
   .Container {
     min-width: 100%;
     height: auto;
@@ -152,68 +179,39 @@ p {
     padding: 0px;
     border-radius: 0;
     display: block;
+ 
   }
+
   .Steps {
     width: 100%;
     background-size: cover;
-    height: 300px;
+    height: 100px;
+    margin-top: 5%;
     padding-top: 5px;
+    display: flex;
     overflow-x: auto;
   }
+  
   .Steps .Step {
-    margin-right: 10px; /* Add space between steps */
-    display: flex;
-    /* flex-direction: row; */
+    margin: 10px;
+    border:none;
   }
-  .Steps .Step:last-child {
-    margin-right: 0; /* Remove margin from the last step */
-  }
-  .Steps .Step .stepNumber {
-    display: flex;
-    margin-right: 10vw;
-    padding: px 13px;
-  background-color: #89177e;
 
+  .Steps .Step:last-child {
+    margin-right: 0;
   }
+
+  .Steps .Step .stepNumber {
+    margin-right: 10vw;
+    padding: 4px 12px;
+  }
+
+  .Steps-content {
+    padding-top: 10px;
+    display: flex;
+  }
+
   .stepInfo {
     display: none;
   }
-
 }
-@media (min-width: 1201px) {
-  .content {
-    min-width: 50%;
-  }
-  
-.Step {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  padding: 5px;
-  margin: 30px 40px;
-  border: 1px solid #ccc;
-  margin-bottom: 5px;
-
-
-}
-  .Steps {
-    position: relative;
-    width: 80%;
-    height: 100%;
-    overflow-y: scroll;
-    font-weight: 100;
-
-  }
-  
-  .Steps::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 30%;
-    height: 100%; 
-    border-radius: 1rem;
-  
-  }
-}
-

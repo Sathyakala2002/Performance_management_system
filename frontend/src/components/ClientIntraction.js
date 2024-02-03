@@ -113,7 +113,7 @@ const ClientInteractions = () => {
           <h2 className="text-2xl font-semibold mb-4">Handling  client interactions Rating :</h2>
           <FormControl fullWidth margin="dense">
             <Rating
-              className="mt-3"
+              className="mt-0"
               name="customerInteractionsRating"
               value={feedbackData.customerInteractionsRating}
               onChange={(e) => handleRatingChange("customerInteractionsRating", e.target.value)}

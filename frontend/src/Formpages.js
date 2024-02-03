@@ -3,7 +3,7 @@ import TaskCompletion from "./components/taskCompletion";
 import MeetingDeadlines from "./components/meeingdeadline"
 import Initiative from "./components/Initiative"
 import Collaboration from "./components/Collaboration";
-import AdaptingNewTasks from "./components/AdaptingNewSills"
+import AdaptingNewTasks from "./components/AdaptingNewSkills"
 import ConflictHandling from "./components/ConflictHandiling"
 import MentorshipSupport from "./components/MentorshipSupport"
 import EthicalBehavior from "./components/Ethicalbehavior"

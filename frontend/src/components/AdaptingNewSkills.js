@@ -126,7 +126,7 @@ const AdaptingNewTasks = () => {
             </h2>
             <FormControl fullWidth margin="dense">
               <Rating
-                className="mt-3"
+                className="mt-0"
                 name="adaptingToNewTasksRating"
                 value={feedbackData.adaptingToNewTasksRating}
                 onChange={(e) =>

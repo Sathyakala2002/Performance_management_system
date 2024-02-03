@@ -112,7 +112,7 @@ const MeetingDeadlines = () => {
           <h2 className="text-2xl font-semibold mb-4">Initiative Rating :</h2>
           <FormControl fullWidth margin="dense">
             <Rating
-              className="mt-3"
+              className="mt-0"
               name="initiativeRating"
               value={feedbackData.initiativeRating}
               onChange={(e) => handleRatingChange("initiativeRating", e.target.value)}

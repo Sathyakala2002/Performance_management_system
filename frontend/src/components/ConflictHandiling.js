@@ -117,7 +117,7 @@ const ConflictHandling = () => {
           <h2 className="text-2xl font-semibold mb-4">Handling conflicts within team Rating :</h2>
           <FormControl fullWidth margin="dense">
             <Rating
-              className="mt-3"
+              className="mt-0"
               name="conflictHandlingRating"
               value={feedbackData.conflictHandlingRating}
               onChange={(e) => handleRatingChange("conflictHandlingRating", e.target.value)}
