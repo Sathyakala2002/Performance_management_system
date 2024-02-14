@@ -4,9 +4,10 @@ const jwt = require("jsonwebtoken");
 
 //create token
 const createToken = (user) => {
-  return jwt.sign({ users: user}, process.env.JWT_SECRET);
-};
+  // const expiresIn = '20m';
 
+  return jwt.sign({ users: user }, process.env.JWT_SECRET);
+};
 // Get employees
 const getUser = async (req, res) => {
   try {

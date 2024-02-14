@@ -8,7 +8,6 @@ export const FeedbackProvider = ({ children }) => {
   const setFeedbackData = (data) => {
     setFeedbackWithEmptyValues(data);
   };
-
   return (
     <FeedbackContext.Provider value={{ feedbackWithEmptyValues, setFeedbackData }}>
       {children}

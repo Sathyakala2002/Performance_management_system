@@ -69,7 +69,7 @@ const Signin = () => {
     if (!validateForm()) {
       return;
     }
-
+console.log(loginData,"Submit");
     try {
       await axios
         .post("http://localhost:5000/loginuser", loginData)
@@ -78,10 +78,9 @@ const Signin = () => {
           localStorage.setItem("token", token);
         });
       getLoggedIn();
-      // enqueueSnackbar("Login successful", { variant: "success" });
       navigate("/table");
     } catch (error) {
-      // enqueueSnackbar(error.response.data.message, { variant: "error" });
+      console.log(error);
     }
   };
 
@@ -132,7 +131,7 @@ const Signin = () => {
             <Typography color="primary" className="mt-1">
               Don't have an account?
             </Typography>
-            <Button  color="primary" type="submit">
+            <Button  color="primary" type="button" onClick={()=>navigate("/signup")}>
               Sign Up
             </Button>
           </div>

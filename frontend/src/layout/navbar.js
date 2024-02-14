@@ -1,16 +1,26 @@
-import React from "react";
-import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText } from "@mui/material";
+import React, { useContext } from "react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  Button,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { styled } from "@mui/material/styles";
-import Button from "@mui/material/Button";
+import { styled } from "@mui/system";
 import { Link } from "react-router-dom";
+import AuthContext from "../context/AuthContext";
+import { useNavigate } from "react-router-dom"
 
-const CustomButton = styled(Button)(() => ({
-  color: "white",
+const CustomButton = styled(Button)(({ theme }) => ({
+  padding:" 10px",
   backgroundColor: "purple",
   "&:hover": {
     backgroundColor: "pink",
-    margin: "3px",
   },
 }));
 
@@ -37,13 +47,20 @@ const DrawerContainer = styled("div")(({ theme }) => ({
 
 function Navbar() {
   const [open, setOpen] = React.useState(false);
-
+  const { loggedIn, getLoggedIn } = useContext(AuthContext);
+  const navigate = useNavigate();
   const handleDrawerOpen = () => {
     setOpen(true);
   };
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleSignOut = async () => {
+    await getLoggedIn();
+    localStorage.removeItem("token");
+    navigate("/")
   };
 
   const pages = [
@@ -67,8 +84,8 @@ function Navbar() {
 
   return (
     <Root>
-      <AppBar position="static" sx={{ backgroundColor: "white",marginTop:"10px" }}>
-        <Toolbar>
+      <AppBar position="static" sx={{ backgroundColor: "white", marginTop: "10px" }}>
+        <Toolbar className = "flex justify-between">
           <MenuButton
             edge="start"
             sx={{ backgroundColor: "white" }}
@@ -77,21 +94,32 @@ function Navbar() {
           >
             <MenuIcon />
           </MenuButton>
-          
-          <Title variant="h6">Navbar</Title>
-          <CustomButton color="inherit">
-            <LinkText to="/signin">Sign In</LinkText>
-          </CustomButton>
-          <CustomButton color="inherit">
-            <LinkText to="/signup">Sign Up</LinkText>
-          </CustomButton>
+
+          {loggedIn ? (
+            <div >
+             <CustomButton color="inherit" onClick={handleSignOut}>
+             Sign Out
+           </CustomButton>
+          </div>
+          ) : (
+            <>
+            <Title variant="h6">Navbar</Title>
+            <CustomButton color="inherit" component={Link} to="/">
+              Sign In
+            </CustomButton>
+            <CustomButton color="inherit" component={Link} to="/signup">
+              Sign Up
+            </CustomButton>
+          </>
+           
+          )}
         </Toolbar>
       </AppBar>
       <Drawer anchor="left" open={open} onClose={handleDrawerClose}>
         <DrawerContainer>
           <List>
             {pages.map(({ name, path }) => (
-              <ListItem key={name} component={Link} to={path}>
+              <ListItem key={name} component={Link} to={path} onClick={handleDrawerClose}>
                 <ListItemText primary={name} />
               </ListItem>
             ))}

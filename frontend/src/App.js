@@ -8,8 +8,8 @@ import FeedbackForm from './screens/Employeefeedback'
 import Home from './screens/home'
 import Navbar from './layout/navbar'
 import SignIn from './auth/singin';
-import SignUp from './auth/signup';
-import { Bar } from './layout/m';
+import SignUp from './auth/signup'
+import UnathorizedPage from './screens/UnathorizedPage'
 import AuthContext from "./context/AuthContext";
 
 
@@ -26,7 +26,7 @@ function App() {
         </>
         )}
 
-         {/* <Route path="/" element={<S />} /> */}
+         <Route path="/*" element={<UnathorizedPage/>} />
         {loggedIn === true && (
           <>
           <Route path="/home" element={<Home />} />
